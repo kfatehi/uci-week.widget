@@ -74,11 +74,9 @@ renderRows: ->
       label = c.name
     out+="""
       <tr>
-        <td>
-          #{@renderIcons(r)}
-        </td>
-        <td>
+        <td style="padding-top:20px">
           #{label}
+          #{@renderIcons(r)}
         </td>
       </tr>
     """
