@@ -15,11 +15,14 @@ courses: [
   ,
     name: "INF 191: Project Course"
     url: "https://canvas.eee.uci.edu/courses/2966"
+    canvas: "https://canvas.eee.uci.edu/courses/2966"
     groupme: "https://web.groupme.com/chats"
     slack: "https://tableauautomation.slack.com/messages/@slackbot/"
     gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwVkRVZlRvRkxFZWc"
     asana: "https://app.asana.com/0/190576529875988/list"
     instagantt: "https://instagantt.com/app/#"
+    when2meet: "http://www.when2meet.com/?5645971-37uAg"
+    tableau: "http://tableau.ics.uci.edu/"
   ,
     name: "UNI AFF 1A: Living 101",
     url: "https://eee.uci.edu/16f/86058"
@@ -44,6 +47,9 @@ iconMap:
   slack: 'slack.jpg'
   instagantt: 'instagantt.png'
   asana: 'asana.jpg'
+  canvas: 'canvas.ico'
+  tableau: 'tableau.ico'
+  when2meet: 'clock.png'
 img: (key) -> """
   <img src="uci-week.widget/img/#{@iconMap[key]}" />
   """
