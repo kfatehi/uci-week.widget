@@ -21,6 +21,7 @@ courses: [
     instagantt: "https://instagantt.com/app/#"
     when2meet: "http://www.when2meet.com/?5645971-37uAg"
     tableau: "http://tableau.ics.uci.edu/"
+    github: "https://github.com/bdwalker93/TMU"
   ,
     name: "UNI AFF 1A: Living 101",
     www: "https://eee.uci.edu/16f/86058"
@@ -49,6 +50,7 @@ iconMap:
   tableau: 'tableau.ico'
   when2meet: 'clock.png'
   discord: "discord.png"
+  github: "github.ico"
 img: (key) -> """
   <img src="uci-week.widget/img/#{@iconMap[key]}" />
   """
