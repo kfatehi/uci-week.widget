@@ -40,13 +40,13 @@ weekString: (wk) ->
   q = @session(wk, 10)
   q('spring') || q('fall') || ''
 iconMap:
+  canvas: 'canvas.ico'
   www: 'www.svg'
   gdrive: 'gdrive.png'
   groupme: 'groupme.jpg'
   slack: 'slack.jpg'
   instagantt: 'instagantt.png'
   asana: 'asana.jpg'
-  canvas: 'canvas.ico'
   tableau: 'tableau.ico'
   when2meet: 'clock.png'
   discord: "discord.png"
