@@ -14,7 +14,7 @@ the todo integration is optional, if you don't care for it, do not define a `tod
 
 ```
 {
-    "todoFile": "~/todo.txat",
+    "todoFile": "~/todo.txt",
     "courses": [
         {
             "name": "INF 125: Game Programming",
