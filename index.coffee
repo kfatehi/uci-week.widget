@@ -1,48 +1,7 @@
+# you can debug at http://localhost:41416/
+configFilePath: '~/uci-widget-config.json'
 command: "echo $(date +'%V')"
 refreshFrequency: 30 * 60 * 1000
-courses: [
-    name: "INF 125: Game Programming"
-    www: "http://ics.uci.edu/~ddenenbe/113-125/"
-    gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwamoydkEzcXNzQWs"
-    discord: "https://discordapp.com/channels/228686226436128778/228686226436128778"
-    github: "https://bitbucket.org/convolutedconcepts/"
-    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-125"
-    todoFilter: /^125/
-  ,
-    name: "INF 133: User Interaction Software"
-    canvas: "https://canvas.eee.uci.edu/courses/2751"
-    www: "https://eee.uci.edu/16f/37070/"
-    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-133"
-    todoFilter: /^133/
-  ,
-    name: "INF 161: Social Analysis of Computerization"
-    www: "https://eee.uci.edu/16f/37090/"
-    gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwYnhrUEZOUG1pVnM"
-    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-161"
-    todoFilter: /^161/
-  ,
-    name: "INF 191: Project Course"
-    canvas: "https://canvas.eee.uci.edu/courses/2966"
-    groupme: "https://web.groupme.com/chats"
-    slack: "https://tableauautomation.slack.com/messages/@slackbot/"
-    gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwVkRVZlRvRkxFZWc"
-    asana: "https://app.asana.com/0/190576529875988/list"
-    instagantt: "https://instagantt.com/app/#"
-    when2meet: "http://www.when2meet.com/?5645971-37uAg"
-    tableau: "http://tableau.ics.uci.edu/"
-    github: "https://github.com/bdwalker93/TMU"
-    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-191"
-    todoFilter: /^191/
-  ,
-    name: "UNI AFF 1A: Living 101",
-    www: "https://eee.uci.edu/16f/86058"
-    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/L101"
-    todoFilter: /^L101/i
-  ,
-    name: "Self"
-    dir: "/Users/keyvan/Dropbox/SelfLearn"
-    todoFilter: /^self/i
-]
 weekSliceMap:
   spring: 12
   fall: 38
@@ -81,40 +40,36 @@ renderIcons: (gen) ->
   for key,v of @iconMap
     out += gen(key)
   out
-renderRows: ->
-  out = ""
-  for key of @courses
-    c = @courses[key]
+renderRows: (domEl, courses) ->
+  container = $(domEl).find('tbody')
+  for key of courses
+    c = courses[key]
     r = @resource(c)
-    if c.url
-      label = """<a href="#{c.url}">#{c.name}</a>"""
-    else
-      label = c.name
-    out+="""
+    container.append $("""
       <tr>
-        <td style="padding-top:20px">
-          #{label}
+        <td>
+          #{c.name}
           <div class="icons">#{@renderIcons(r)}</div>
           <ul class="todo"></ul>
         </td>
       </tr>
-    """
-  out
+    """)
+
+renderError: (domEl, err) ->
+  msg = if err.message then err.message else err
+  $(domEl).find('#errors').append $('<div>').append(msg)
+
 render: (wk) -> """
-  <h1>Week #{wk} of 52</h1>
-  <h2>#{@weekString(wk)}</h2>
+  <div id="errors"></div>
   <table>
     <tbody>
       <tr>
-        <td class="eee" colspan=2>
+        <td class="toplinks" colspan=2>
+          #{@weekString(wk)} |
           <a href="https://www.reg.uci.edu/calendars/quarterly/2016-2017/quarterly16-17.html">Calendar</a> |
           <a href="https://eee.uci.edu/myeee/">EEE</a> |
-          <a href="https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwT2dfQk5rbjVpSlU">
-            #{@img('gdrive')}
-          </a>
         </td>
       </tr>
-      #{@renderRows()}
     </tbody>
   </table>
   """
@@ -126,22 +81,43 @@ setupDirLinks: (el) ->
     if /^\//.test(val)
       $(a).on 'click', run("open #{val}")
 
-fillTodo: (el) ->
+fillTodo: (el, courses, todoFile) ->
   createItems = (all) => (filter) => (ul) =>
     select = (i) -> new RegExp(filter).test(i)
     render = (i) -> "<li>#{i.replace(filter,'')}</li>"
     $(ul).append all.filter(select).map(render)
 
-  @run "cat ~/todo.txt", (err, out) =>
-    all = out.trim().split("\n")
-    populate = createItems(all)
+  @run "cat #{todoFile}", (err, out) =>
+    if err
+      @renderError(el, err)
+    else
+      all = out.trim().split("\n")
+      populate = createItems(all)
 
-    for ul,i in $(el).find('ul.todo')
-      populate(@courses[i].todoFilter)(ul)
+      for ul,i in $(el).find('ul.todo')
+        course = courses[i]
+        populate(course.todoFilter)(ul)
+
+getConfig: (configFile, cb) ->
+  @run "cat #{configFile}", (err, res) =>
+    if err
+      cb(err)
+    else
+      try
+        cb(null, JSON.parse(res))
+      catch terr
+        cb(terr)
 
 afterRender: (el) ->
-  @setupDirLinks(el)
-  @fillTodo(el)
+  @getConfig @configFilePath, (err, config) =>
+    if err
+      @renderError(el, "Failed to load config file #{@configFilePath}")
+      @renderError(el, err)
+    else
+      @renderRows(el, config.courses)
+      @setupDirLinks(el)
+      if config.todoFile
+        @fillTodo(el, config.courses, config.todoFile)
 
 style: """
   background: white no-repeat 50% 20px
@@ -151,8 +127,10 @@ style: """
   font-weight: 300
   top: 0%
   left: 0%
-  line-height: 1.5
   padding: 20px
+
+  #errors
+    color: red
 
   a
     text-decoration: none
@@ -167,6 +145,6 @@ style: """
     font-weight: 200
     margin: 16px 0 8px
 
-  .eee
+  .toplinks
     border-bottom: 1px solid #ccc;
 """
