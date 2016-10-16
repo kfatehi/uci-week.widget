@@ -83,8 +83,9 @@ setupDirLinks: (el) ->
 
 fillTodo: (el, courses, todoFile) ->
   createItems = (all) => (filter) => (ul) =>
-    select = (i) -> new RegExp(filter).test(i)
-    render = (i) -> "<li>#{i.replace(filter,'')}</li>"
+    pattern = new RegExp(filter)
+    select = (i) -> pattern.test(i)
+    render = (i) -> "<li>#{i.replace(pattern,'')}</li>"
     $(ul).append all.filter(select).map(render)
 
   @run "cat #{todoFile}", (err, out) =>
