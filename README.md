@@ -1,10 +1,16 @@
-# important
+## screenshot
+
+![screenshot](https://raw.githubusercontent.com/kfatehi/uci-week.widget/master/screenshot.png)
+
+## important
 
 you need a `uci-widget-config.json` file in your home directory -- see the example below
 
 the todo integration is optional, if you don't care for it, do not define a `todoFile`
 
-# example config
+##
+
+## example config
 
 ```
 {
@@ -60,4 +66,16 @@ the todo integration is optional, if you don't care for it, do not define a `tod
         }
     ]
 }
+```
+
+## more info about the todo integration
+
+in the screenshot above, what is happening is the `todoFile` is being read and filtered down by the `todoFilter` attribute defined on each item in `courses`. the todo file at the moment of the screenshot was as follows:
+
+```
+L101 golden nugget due 10/19
+L101 read page 96-132 by 10/19
+L101 read capstone project instructions by 10/19
+161 3 page reading comment due 10/27
+L101 capstone proposal due 10/26
 ```
