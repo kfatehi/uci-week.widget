@@ -1,5 +1,5 @@
 command: "echo $(date +'%V')"
-refreshFrequency: 60000
+refreshFrequency: 30 * 60 * 1000
 courses: [
     name: "INF 125: Game Programming"
     www: "http://ics.uci.edu/~ddenenbe/113-125/"
@@ -7,19 +7,19 @@ courses: [
     discord: "https://discordapp.com/channels/228686226436128778/228686226436128778"
     github: "https://bitbucket.org/convolutedconcepts/"
     dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-125"
-    todoFilter: "161"
+    todoFilter: /^125/
   ,
     name: "INF 133: User Interaction Software"
     canvas: "https://canvas.eee.uci.edu/courses/2751"
     www: "https://eee.uci.edu/16f/37070/"
     dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-133"
-    todoFilter: "133"
+    todoFilter: /^133/
   ,
     name: "INF 161: Social Analysis of Computerization"
     www: "https://eee.uci.edu/16f/37090/"
     gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwYnhrUEZOUG1pVnM"
     dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-161"
-    todoFilter: "161"
+    todoFilter: /^161/
   ,
     name: "INF 191: Project Course"
     canvas: "https://canvas.eee.uci.edu/courses/2966"
@@ -32,16 +32,16 @@ courses: [
     tableau: "http://tableau.ics.uci.edu/"
     github: "https://github.com/bdwalker93/TMU"
     dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-191"
-    todoFilter: "191"
+    todoFilter: /^191/
   ,
     name: "UNI AFF 1A: Living 101",
     www: "https://eee.uci.edu/16f/86058"
     dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/L101"
-    todoFilter: "L101"
+    todoFilter: /^L101/i
   ,
     name: "Self"
     dir: "/Users/keyvan/Dropbox/SelfLearn"
-    todoFilter: "self"
+    todoFilter: /^self/i
 ]
 weekSliceMap:
   spring: 12
@@ -129,7 +129,7 @@ setupDirLinks: (el) ->
 fillTodo: (el) ->
   createItems = (all) => (filter) => (ul) =>
     select = (i) -> new RegExp(filter).test(i)
-    render = (i) -> "<li>#{i}</li>"
+    render = (i) -> "<li>#{i.replace(filter,'')}</li>"
     $(ul).append all.filter(select).map(render)
 
   @run "cat ~/todo.txt", (err, out) =>
