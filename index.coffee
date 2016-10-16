@@ -1,3 +1,5 @@
+command: "echo $(date +'%V')"
+refreshFrequency: 60000
 courses: [
     name: "INF 125: Game Programming"
     www: "http://ics.uci.edu/~ddenenbe/113-125/"
@@ -5,14 +7,19 @@ courses: [
     discord: "https://discordapp.com/channels/228686226436128778/228686226436128778"
     github: "https://bitbucket.org/convolutedconcepts/"
     dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-125"
+    todoFilter: "161"
   ,
     name: "INF 133: User Interaction Software"
     canvas: "https://canvas.eee.uci.edu/courses/2751"
     www: "https://eee.uci.edu/16f/37070/"
+    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-133"
+    todoFilter: "133"
   ,
     name: "INF 161: Social Analysis of Computerization"
     www: "https://eee.uci.edu/16f/37090/"
     gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwYnhrUEZOUG1pVnM"
+    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-161"
+    todoFilter: "161"
   ,
     name: "INF 191: Project Course"
     canvas: "https://canvas.eee.uci.edu/courses/2966"
@@ -24,12 +31,18 @@ courses: [
     when2meet: "http://www.when2meet.com/?5645971-37uAg"
     tableau: "http://tableau.ics.uci.edu/"
     github: "https://github.com/bdwalker93/TMU"
+    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-191"
+    todoFilter: "191"
   ,
     name: "UNI AFF 1A: Living 101",
     www: "https://eee.uci.edu/16f/86058"
+    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/L101"
+    todoFilter: "L101"
+  ,
+    name: "Self"
+    dir: "/Users/keyvan/Dropbox/SelfLearn"
+    todoFilter: "self"
 ]
-command: "echo $(date +'%V')"
-refreshFrequency: 86400 * 1000 # 24 hours
 weekSliceMap:
   spring: 12
   fall: 38
@@ -81,7 +94,8 @@ renderRows: ->
       <tr>
         <td style="padding-top:20px">
           #{label}
-          #{@renderIcons(r)}
+          <div class="icons">#{@renderIcons(r)}</div>
+          <ul class="todo"></ul>
         </td>
       </tr>
     """
@@ -105,13 +119,29 @@ render: (wk) -> """
   </table>
   """
 
-afterRender: (domEl) ->
+setupDirLinks: (el) ->
   run = (c)=>()=> @run c ; false
-  for _a,i in $(domEl).find('a.resource')
-    a = $(_a)
-    val = a.attr('href')
+  for a,i in $(el).find('a.resource')
+    val = $(a).attr('href')
     if /^\//.test(val)
-      a.on 'click', run("open #{val}")
+      $(a).on 'click', run("open #{val}")
+
+fillTodo: (el) ->
+  createItems = (all) => (filter) => (ul) =>
+    select = (i) -> new RegExp(filter).test(i)
+    render = (i) -> "<li>#{i}</li>"
+    $(ul).append all.filter(select).map(render)
+
+  @run "cat ~/todo.txt", (err, out) =>
+    all = out.trim().split("\n")
+    populate = createItems(all)
+
+    for ul,i in $(el).find('ul.todo')
+      populate(@courses[i].todoFilter)(ul)
+
+afterRender: (el) ->
+  @setupDirLinks(el)
+  @fillTodo(el)
 
 style: """
   background: white no-repeat 50% 20px
@@ -119,10 +149,10 @@ style: """
   color: #141f33
   font-family: Helvetica Neue
   font-weight: 300
+  top: 0%
   left: 0%
   line-height: 1.5
   padding: 20px
-  top: 10%
 
   a
     text-decoration: none
