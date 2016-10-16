@@ -3,6 +3,8 @@ courses: [
     www: "http://ics.uci.edu/~ddenenbe/113-125/"
     gdrive: "https://drive.google.com/drive/u/1/folders/0B-TeA-VgdXKwamoydkEzcXNzQWs"
     discord: "https://discordapp.com/channels/228686226436128778/228686226436128778"
+    github: "https://bitbucket.org/convolutedconcepts/"
+    dir: "/Users/keyvan/Dropbox/UCI/Fall-2016/INF-125"
   ,
     name: "INF 133: User Interaction Software"
     canvas: "https://canvas.eee.uci.edu/courses/2751"
@@ -40,6 +42,7 @@ weekString: (wk) ->
   q = @session(wk, 10)
   q('spring') || q('fall') || ''
 iconMap:
+  dir: 'dir.png'
   canvas: 'canvas.ico'
   www: 'www.svg'
   gdrive: 'gdrive.png'
@@ -55,9 +58,9 @@ img: (key) -> """
   <img src="uci-week.widget/img/#{@iconMap[key]}" />
   """
 resource: (c) -> (key) =>
-  url = c[key]
-  if (url)
-    """<a href="#{url}">#{@img(key)}</a>"""
+  val = c[key]
+  if (val)
+    """<a class="resource" href="#{val}">#{@img(key)}</a>"""
   else
     ""
 renderIcons: (gen) ->
@@ -101,6 +104,15 @@ render: (wk) -> """
     </tbody>
   </table>
   """
+
+afterRender: (domEl) ->
+  run = (c)=>()=> @run c ; false
+  for _a,i in $(domEl).find('a.resource')
+    a = $(_a)
+    val = a.attr('href')
+    if /^\//.test(val)
+      a.on 'click', run("open #{val}")
+
 style: """
   background: white no-repeat 50% 20px
   box-sizing: border-box
