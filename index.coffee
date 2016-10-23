@@ -82,11 +82,19 @@ setupDirLinks: (el) ->
       $(a).on 'click', run("open #{val}")
 
 fillTodo: (el, courses, todoFile) ->
+  markAsDone = (lineIndex, el) =>
+    @run "uci-week.widget/todo-mark-done.sh #{lineIndex+1} #{todoFile}", (err, res) ->
+      el.remove()
   createItems = (all) => (filter) => (ul) =>
     pattern = new RegExp(filter)
-    select = (i) -> pattern.test(i)
-    render = (i) -> "<li>#{i.replace(pattern,'')}</li>"
-    $(ul).append all.filter(select).map(render)
+    indexify = (text, i) -> ({ text: text, index: i })
+    select = (i) -> pattern.test(i.text)
+    render = (i) -> $("<li>#{i.text.replace(pattern,'')}</li>")
+    $(ul).append all.map(indexify).filter(select).map (i) ->
+      todoEl = render(i)
+      done = $('<button>done</done>').on 'click', ->
+        markAsDone(i.index, todoEl)
+      todoEl.append(done)
 
   @run "cat #{todoFile}", (err, out) =>
     if err
@@ -119,6 +127,9 @@ afterRender: (el) ->
       @setupDirLinks(el)
       if config.todoFile
         @fillTodo(el, config.courses, config.todoFile)
+      #mycmd="/Users/keyvan/Library/Application\\ Support/Übersicht/widgets/uci-week.widget/watch.sh #{config.todoFile}"
+      #@run mycmd, (err, res) =>
+      #  console.log(err, res)
 
 style: """
   background: white no-repeat 50% 20px
@@ -126,7 +137,7 @@ style: """
   color: #141f33
   font-family: Helvetica Neue
   font-weight: 300
-  top: 0%
+  top: 8%
   left: 0%
   padding: 20px
 
@@ -148,4 +159,19 @@ style: """
 
   .toplinks
     border-bottom: 1px solid #ccc;
+
+  td
+    max-width: 400px
 """
+
+
+
+
+
+
+
+
+
+
+
+
