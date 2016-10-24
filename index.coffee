@@ -40,7 +40,13 @@ renderIcons: (gen) ->
   for key,v of @iconMap
     out += gen(key)
   out
+
 renderRows: (domEl, courses) ->
+  today = new Date().getDay()
+  isToday = (daysArray) ->
+    if daysArray?
+      daysArray.indexOf(today) >= 0
+
   container = $(domEl).find('tbody')
   for key of courses
     c = courses[key]
@@ -48,7 +54,7 @@ renderRows: (domEl, courses) ->
     container.append $("""
       <tr>
         <td>
-          #{c.name}
+          <span class="#{if isToday(c.days) then 'today' else ''}">#{c.name}</span>
           <div class="icons">#{@renderIcons(r)}</div>
           <ul class="todo"></ul>
         </td>
@@ -89,12 +95,13 @@ fillTodo: (el, courses, todoFile) ->
     pattern = new RegExp(filter)
     indexify = (text, i) -> ({ text: text, index: i })
     select = (i) -> pattern.test(i.text)
-    render = (i) -> $("<li>#{i.text.replace(pattern,'')}</li>")
     $(ul).append all.map(indexify).filter(select).map (i) ->
-      todoEl = render(i)
-      done = $('<button>done</done>').on 'click', ->
+      text = i.text.replace(pattern,'')
+      todoEl = $("<li>")
+      done = $('<button>x</button>').on 'click', ->
         markAsDone(i.index, todoEl)
       todoEl.append(done)
+      todoEl.append(text)
 
   @run "cat #{todoFile}", (err, out) =>
     if err
@@ -127,9 +134,6 @@ afterRender: (el) ->
       @setupDirLinks(el)
       if config.todoFile
         @fillTodo(el, config.courses, config.todoFile)
-      #mycmd="/Users/keyvan/Library/Application\\ Support/Übersicht/widgets/uci-week.widget/watch.sh #{config.todoFile}"
-      #@run mycmd, (err, res) =>
-      #  console.log(err, res)
 
 style: """
   background: white no-repeat 50% 20px
@@ -140,6 +144,9 @@ style: """
   top: 8%
   left: 0%
   padding: 20px
+
+  .today
+    font-weight: bold
 
   #errors
     color: red
@@ -163,15 +170,5 @@ style: """
   td
     max-width: 400px
 """
-
-
-
-
-
-
-
-
-
-
 
 
