@@ -88,9 +88,6 @@ setupDirLinks: (el) ->
       $(a).on 'click', run("open #{val}")
 
 fillTodo: (el, courses, todoFile) ->
-  markAsDone = (lineIndex, el) =>
-    @run "uci-week.widget/todo-mark-done.sh #{lineIndex+1} #{todoFile}", (err, res) ->
-      el.remove()
   createItems = (all) => (filter) => (ul) =>
     pattern = new RegExp(filter)
     indexify = (text, i) -> ({ text: text, index: i })
@@ -98,9 +95,6 @@ fillTodo: (el, courses, todoFile) ->
     $(ul).append all.map(indexify).filter(select).map (i) ->
       text = i.text.replace(pattern,'')
       todoEl = $("<li>")
-      done = $('<button>x</button>').on 'click', ->
-        markAsDone(i.index, todoEl)
-      todoEl.append(done)
       todoEl.append(text)
 
   @run "cat #{todoFile}", (err, out) =>
