@@ -5,6 +5,7 @@ refreshFrequency: 30 * 60 * 1000
 weekSliceMap:
   spring: 12
   fall: 38
+  winter: 1
 session: (wk, numWeeks) -> (name) =>
   sliceAt = @weekSliceMap[name]
   weekNo = parseInt(wk) - sliceAt
@@ -12,7 +13,7 @@ session: (wk, numWeeks) -> (name) =>
     "UCI Week #{weekNo} of 10"
 weekString: (wk) ->
   q = @session(wk, 10)
-  q('spring') || q('fall') || ''
+  q('spring') || q('fall') || q('winter') || ''
 iconMap:
   dir: 'dir.png'
   canvas: 'canvas.ico'
@@ -27,7 +28,7 @@ iconMap:
   discord: "discord.png"
   github: "github.ico"
 img: (key) -> """
-  <img src="uci-week.widget/img/#{@iconMap[key]}" />
+  <img height="24" width="24" alt="#{key}" src="uci-week.widget/img/#{@iconMap[key]}" />
   """
 resource: (c) -> (key) =>
   val = c[key]
