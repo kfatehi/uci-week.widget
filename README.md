@@ -1,3 +1,7 @@
+# uci-week.widget
+
+This is an [Ubersicht](http://tracesof.net/uebersicht/) widget. Use it with [Ubersicht](http://tracesof.net/uebersicht/) on mac or an alternative like [ubersicht-mini](https://github.com/kfatehi/ubersicht-mini).
+
 ## screenshot
 
 ![screenshot](https://raw.githubusercontent.com/kfatehi/uci-week.widget/master/screenshot.png)
@@ -7,8 +11,6 @@
 you need a `uci-widget-config.json` file in your home directory -- see the example below
 
 the todo integration is optional, if you don't care for it, do not define a `todoFile`
-
-##
 
 ## example config
 
@@ -79,3 +81,7 @@ L101 read capstone project instructions by 10/19
 161 3 page reading comment due 10/27
 L101 capstone proposal due 10/26
 ```
+
+## highlighting days
+
+For any course entry, you can set `days` to an array of weekday numbers. For example if you want to highlight a particular course on Mondays and Wednesdays, set `"days": [1,3]` 
