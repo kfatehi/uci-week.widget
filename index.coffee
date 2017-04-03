@@ -3,7 +3,7 @@ configFilePath: '~/uci-widget-config.json'
 command: "echo $(date +'%V')"
 refreshFrequency: 30 * 60 * 1000
 weekSliceMap:
-  spring: 12
+  spring: 13
   fall: 38
   winter: 1
 session: (wk, numWeeks) -> (name) =>
